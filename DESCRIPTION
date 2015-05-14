@@ -8,8 +8,9 @@ Author@R: c(person("Charles", "Joly Beauparlant",
 Maintainer: Charles Joly Beauparlant <charles.joly-beauparlant@crchul.ulaval.ca>
 Description: This packages provided helper functions to extract the normalized
     expression of Fantom's enhancers (in TPM).
-Imports: GenomicRanges, GenomeInfoDb, rtracklayer
+Imports: GenomicRanges, S4Vectors
 biocViews: ExperimentData, OrganismData, Hoso_sapiens_data
 License: Artistic-2.0
 VignetteBuilder: knitr
 Suggests: knitr
+Depends: R (>= 3.2)
