@@ -20,3 +20,25 @@ download_file <- function(url, dest_file, force = FALSE) {
     download.file(url, dest_file)
   }
 }
+
+#' Get a vector of Fantom's ID matching a cell_type
+#'
+#' Will check in Fantom's sample names for names that contains the
+#' \code{cell_line} param, ignoring case and will return the results as a
+#' vector of IDs.
+#'
+#' @param cell_line A string corresponding to the name of the cell line.
+#' @param filename The path to the Fantom's TSS file
+#'
+#' @return
+#'   A vector with the fantom's ID(s) matching filename
+#'
+#' @examples
+#'    get_fantom_id("GM12878")
+#'
+#' @export
+get_fantom_id <- function(cell_line) {
+  i <- grepl(cell_line, exp_description[["Comment..sample_name."]],
+             ignore.case = TRUE)
+  as.character(exp_description[i,][["Library.Name"]])
+}
