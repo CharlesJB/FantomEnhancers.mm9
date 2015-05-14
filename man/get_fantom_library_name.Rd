@@ -8,8 +8,6 @@ get_fantom_library_name(cell_line)
 }
 \arguments{
 \item{cell_line}{A string corresponding to the name of the cell line.}
-
-\item{filename}{The path to the Fantom's TSS file}
 }
 \value{
 A vector with the fantom's libraries ID(s) matching filename

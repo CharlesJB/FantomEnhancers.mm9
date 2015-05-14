@@ -28,7 +28,6 @@ download_file <- function(url, dest_file, force = FALSE) {
 #' vector of IDs.
 #'
 #' @param cell_line A string corresponding to the name of the cell line.
-#' @param filename The path to the Fantom's TSS file
 #'
 #' @return
 #'   A vector with the fantom's libraries ID(s) matching filename
@@ -106,7 +105,7 @@ get_enhancers <- function() {
 #'   get_enhancers_tpm(cell_lines = "A549")
 #'
 #'   # To get the TPM in A549 and in K562 cell lines
-#'   get_enhancers_tmp(cell_lines = c("A549", "K562"))
+#'   get_enhancers_tpm(cell_lines = c("A549", "K562"))
 #'
 #'   # To get the TPM K562 cell lines and merge metadata columns by returning
 #'   # their mean value

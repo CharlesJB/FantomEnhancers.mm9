@@ -47,7 +47,7 @@ cell type enhancer expression (in TPM).
   get_enhancers_tpm(cell_lines = "A549")
 
   # To get the TPM in A549 and in K562 cell lines
-  get_enhancers_tmp(cell_lines = c("A549", "K562"))
+  get_enhancers_tpm(cell_lines = c("A549", "K562"))
 
   # To get the TPM K562 cell lines and merge metadata columns by returning
   # their mean value
