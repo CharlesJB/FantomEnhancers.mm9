@@ -56,7 +56,8 @@ data_fantom_enhancers <- function(force = FALSE) {
   df[["end"]] <- as.numeric(as.character(df[["end"]]))
   df[["strand"]] <- "*"
   df <- cbind(df, enhancers[,-1])
-  GenomicRanges::makeGRangesFromDataFrame(df, keep.extra.columns = TRUE)
+  GenomicRanges::makeGRangesFromDataFrame(df, keep.extra.columns = TRUE,
+    seqinfo = GenomeInfoDb::Seqinfo(genome = "hg19"))
 }
 
 # Prepare the exp_description dataset
