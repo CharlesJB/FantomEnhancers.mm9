@@ -12,3 +12,4 @@ Imports: GenomicRanges, GenomeInfoDb, rtracklayer
 biocViews: ExperimentData, OrganismData, Hoso_sapiens_data
 License: Artistic-2.0
 VignetteBuilder: knitr
+Suggests: knitr

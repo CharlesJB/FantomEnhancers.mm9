@@ -112,6 +112,7 @@ get_enhancers <- function() {
 #'   # their mean value
 #'   get_enhancers_tpm(cell_lines = "K562", merge.FUN = mean)
 #'
+#' @export
 get_enhancers_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
   if (is.null(cell_lines)) {
     enhancers
