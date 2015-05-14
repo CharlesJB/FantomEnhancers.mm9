@@ -1,0 +1,68 @@
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Position and normalized expression of Fantom's enhancers}
+-->
+
+Position and normalized expression of Fantom's enhancers
+========================================================
+
+Charles Joly Beauparlant
+
+This package and the underlying metagene code are distributed under 
+the Artistic license 2.0. You are free to use and redistribute this software. 
+
+## Installation
+
+```{r installation, eval = FALSE}
+require(devtools)
+devtools::install_github("CharlesJB/FantomEnhancers.hg19")
+```
+
+## Loading the library
+
+```{r loadLibrary}
+library("FantomEnhancers.hg19")
+```
+
+## Main functions
+
+### `get_enhancers`
+
+The `get_enhancers` functions returns a `GRanges` object with all the enhancers and no metadata columns:
+
+```
+get_enhancers()
+```
+
+### `get_enhancers_tpm`
+
+The `get_enhancers_tpm` returns a `GRanges` object with all the enhancers and selected metadata columns:
+
+To get the expression of enhancers in A549:
+```{r getA546}
+get_enhancers_tpm(cell_lines = "A549")
+```
+
+To get the expression of enhancers in A549 and K562:
+```{r getA546K562}
+get_enhancers_tpm(cell_lines = c("A549", "K562"))
+```
+
+To merge all the columns for a cell line by calculating the mean value for each enhancers:
+```{r funMean}
+get_enhancers_tpm(cell_lines = c("A549", "K562"), merge.FUN = mean)
+```
+
+To merge all the columns for a cell line by calculating the sum for each enhancers:
+```{r funSum}
+get_enhancers_tpm(cell_lines = c("A549", "K562"), merge.FUN = sum)
+```
+
+It's also possible to create our own function, as long as it take a `vector` of `numeric` as input and outputs a single `numeric` value:
+```{r dummyFunction}
+# We create a dummy function that returns first element of a vector
+dummy_function <- function(x) {
+  x[1]
+}
+get_enhancers_tpm(cell_lines = c("A549", "K562"), merge.FUN = dummy_function)
+```
