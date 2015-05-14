@@ -21,7 +21,7 @@ download_file <- function(url, dest_file, force = FALSE) {
   }
 }
 
-#' Get a vector of Fantom's ID matching a cell_type
+#' Get a vector of Fantom's libraries ID matching a cell_type
 #'
 #' Will check in Fantom's sample names for names that contains the
 #' \code{cell_line} param, ignoring case and will return the results as a
@@ -31,14 +31,140 @@ download_file <- function(url, dest_file, force = FALSE) {
 #' @param filename The path to the Fantom's TSS file
 #'
 #' @return
-#'   A vector with the fantom's ID(s) matching filename
+#'   A vector with the fantom's libraries ID(s) matching filename
 #'
 #' @examples
-#'    get_fantom_id("GM12878")
+#'    get_fantom_library_name("GM12878")
 #'
 #' @export
-get_fantom_id <- function(cell_line) {
+get_fantom_library_name <- function(cell_line) {
   i <- grepl(cell_line, exp_description[["Comment..sample_name."]],
              ignore.case = TRUE)
   as.character(exp_description[i,][["Library.Name"]])
+}
+
+#' Get a GRanges object with all the enhancers from Fantom.
+#'
+#' Produce a GRanges object containing all the enhancers from Fantom but
+#' without the expression values for every experiments.
+#'
+#' @seealso  \code{\link{get_enhancers_tpm}}
+#'
+#' @return A \code{GRanges} object representing every enhancers from Fantom in
+#'   hg19.
+#'
+#' @examples
+#'   get_enhancers()
+#'
+#' @import GenomicRanges
+#' @export
+get_enhancers <- function() {
+  to_return <- enhancers
+  S4Vectors::mcols(to_return) <- NULL
+  to_return
+}
+
+#' Get a GRanges object with the TPM values for specific cell types
+#'
+#' Returns a GRanges with metadata columns corresponding to the requested
+#' cell type enhancer expression (in TPM).
+#'
+#' @seealso \code{\link{get_enhancers}}
+#' @seealso \code{\link{get_fantom_library_name}}
+#'
+#' @param cell_lines The cell line(s) to fetch. Must be a vector of character.
+#'                   The function will look for the pattern (with \code{grepl})
+#'                   to find case-insensitive match(es) with this param in the
+#'                   Fantom's experiments sample names.
+#'
+#'                   If \code{NULL}, this will return a \code{GRanges} object
+#'                   with all the Fantom's experiments (1827 columns).
+#'
+#'                   The metadata columns will be named using the
+#'                   \code{cell_type} param. When \code{merge.FUN} is
+#'                   \code{NULL} and there is multiple experiment for the same
+#'                   cell line, a counter will be added after each name to
+#'                   ensure all metadata colnames are unique (i.e.: A549_1,
+#'                   A549_2, A549_3). If \code{NULL}, the experiment names will
+#'                   be used for each metadata colnames.
+#'
+#'                   Default: \code{NULL}.
+#' @param merge.FUN  A function to merge the TPM when there is more than one
+#'                   column for the same cell type. Must take a vector of
+#'                   numeric as input and returns a single numeric value.
+#'
+#'                   Default: \code{NULL}
+#'
+#' @return A \code{GRanges} object with the metadata columns containing the
+#'   expression value in TMP for the requested cell line(s), all 1827
+#'   experiments expression values are returned if \code{cell_line} is
+#'   \code{NULL}. If the cell line(s) is not found, an empty \code{GRanges} is
+#'   returned.
+#'
+#' @examples
+#'   # To get the TPM in A549 cell lines
+#'   get_enhancers_tpm(cell_lines = "A549")
+#'
+#'   # To get the TPM in A549 and in K562 cell lines
+#'   get_enhancers_tmp(cell_lines = c("A549", "K562"))
+#'
+#'   # To get the TPM K562 cell lines and merge metadata columns by returning
+#'   # their mean value
+#'   get_enhancers_tpm(cell_lines = "K562", merge.FUN = mean)
+#'
+get_enhancers_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
+  if (is.null(cell_lines)) {
+    enhancers
+  } else {
+    # Get libraries IDs
+    cell_line <- unique(cell_lines)
+    ids <- lapply(cell_lines, get_fantom_library_name)
+    names(ids) <- cell_lines
+
+    # Fetch columns
+    idx <- lapply(ids, function(x) colnames(S4Vectors::mcols(enhancers)) %in% x)
+    metadata <- lapply(idx, function(i)
+                         S4Vectors::DataFrame(S4Vectors::mcols(enhancers)[,i]))
+
+    # Merge the columns
+    if (!is.null(merge.FUN)) {
+      metadata <- lapply(metadata,
+			 function(x) apply(as.data.frame(x), 1, merge.FUN))
+      names
+    } else {
+      get_names <- function(basename) {
+        id <- ids[[basename]]
+        names <- rep(basename, length(id))
+        paste(names, 1:length(names), sep = "_")
+      }
+      metadata <- lapply(metadata, as.data.frame)
+      metadata <- do.call("cbind", metadata)
+      colnames(metadata) <- unlist(lapply(cell_lines, get_names))
+    }
+
+    # Add the metadata to the gr to return
+    gr <- enhancers
+    S4Vectors::mcols(gr) <- metadata
+    gr
+  }
+}
+
+#' Get Fantom's experiment metadata
+#'
+#' This function returns the library names and the sample names for every
+#' experiment from Fantom.
+#'
+#' @seealso get_fantom_library_name
+#'
+#' @return A \code{data.frame} with 2 columns: "library_name" and
+#' "sample_name". One row per Fantom experiment.
+#'
+#' @examples
+#'   head(get_experiment_infos())
+#'
+#' @export
+get_experiment_infos <- function() {
+  to_return <- exp_description[,c("Library.Name", "Comment..sample_name.")]
+  colnames(to_return) <- c("library_name", "sample_name")
+  to_return
 }
