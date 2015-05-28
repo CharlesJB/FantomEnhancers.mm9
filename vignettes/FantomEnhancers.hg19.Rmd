@@ -26,36 +26,36 @@ library("FantomEnhancers.hg19")
 
 ## Main functions
 
-### `get_enhancers`
+### `get_fantom_enhancers`
 
-The `get_enhancers` functions returns a `GRanges` object with all the enhancers and no metadata columns:
+The `get_fantom_enhancers` functions returns a `GRanges` object with all the enhancers and no metadata columns:
 
 ```
-get_enhancers()
+get_fantom_enhancers()
 ```
 
-### `get_enhancers_tpm`
+### `get_fantom_enhancers_tpm`
 
-The `get_enhancers_tpm` returns a `GRanges` object with all the enhancers and selected metadata columns:
+The `get_fantom_enhancers_tpm` returns a `GRanges` object with all the enhancers and selected metadata columns:
 
 To get the expression of enhancers in A549:
 ```{r getA546}
-get_enhancers_tpm(cell_lines = "A549")
+get_fantom_enhancers_tpm(cell_lines = "A549")
 ```
 
 To get the expression of enhancers in A549 and K562:
 ```{r getA546K562}
-get_enhancers_tpm(cell_lines = c("A549", "K562"))
+get_fantom_enhancers_tpm(cell_lines = c("A549", "K562"))
 ```
 
 To merge all the columns for a cell line by calculating the mean value for each enhancers:
 ```{r funMean}
-get_enhancers_tpm(cell_lines = c("A549", "K562"), merge.FUN = mean)
+get_fantom_enhancers_tpm(cell_lines = c("A549", "K562"), merge.FUN = mean)
 ```
 
 To merge all the columns for a cell line by calculating the sum for each enhancers:
 ```{r funSum}
-get_enhancers_tpm(cell_lines = c("A549", "K562"), merge.FUN = sum)
+get_fantom_enhancers_tpm(cell_lines = c("A549", "K562"), merge.FUN = sum)
 ```
 
 It's also possible to create our own function, as long as it take a `vector` of `numeric` as input and outputs a single `numeric` value:
@@ -64,5 +64,5 @@ It's also possible to create our own function, as long as it take a `vector` of 
 dummy_function <- function(x) {
   x[1]
 }
-get_enhancers_tpm(cell_lines = c("A549", "K562"), merge.FUN = dummy_function)
+get_fantom_enhancers_tpm(cell_lines = c("A549", "K562"), merge.FUN = dummy_function)
 ```

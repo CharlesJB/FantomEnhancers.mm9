@@ -33,10 +33,10 @@ download_file <- function(url, dest_file, force = FALSE) {
 #'   A vector with the fantom's libraries ID(s) matching filename
 #'
 #' @examples
-#'    get_fantom_library_name("GM12878")
+#'    get_fantom_fantom_library_name("GM12878")
 #'
 #' @export
-get_fantom_library_name <- function(cell_line) {
+get_fantom_fantom_library_name <- function(cell_line) {
   i <- grepl(cell_line, exp_description[["Comment..sample_name."]],
              ignore.case = TRUE)
   as.character(exp_description[i,][["Library.Name"]])
@@ -47,17 +47,17 @@ get_fantom_library_name <- function(cell_line) {
 #' Produce a GRanges object containing all the enhancers from Fantom but
 #' without the expression values for every experiments.
 #'
-#' @seealso  \code{\link{get_enhancers_tpm}}
+#' @seealso  \code{\link{get_fantom_enhancers_tpm}}
 #'
 #' @return A \code{GRanges} object representing every enhancers from Fantom in
 #'   hg19.
 #'
 #' @examples
-#'   get_enhancers()
+#'   get_fantom_enhancers()
 #'
 #' @import GenomicRanges
 #' @export
-get_enhancers <- function() {
+get_fantom_enhancers <- function() {
   to_return <- enhancers
   S4Vectors::mcols(to_return) <- NULL
   to_return
@@ -68,8 +68,8 @@ get_enhancers <- function() {
 #' Returns a GRanges with metadata columns corresponding to the requested
 #' cell type enhancer expression (in TPM).
 #'
-#' @seealso \code{\link{get_enhancers}}
-#' @seealso \code{\link{get_fantom_library_name}}
+#' @seealso \code{\link{get_fantom_enhancers}}
+#' @seealso \code{\link{get_fantom_fantom_library_name}}
 #'
 #' @param cell_lines The cell line(s) to fetch. Must be a vector of character.
 #'                   The function will look for the pattern (with \code{grepl})
@@ -102,23 +102,23 @@ get_enhancers <- function() {
 #'
 #' @examples
 #'   # To get the TPM in A549 cell lines
-#'   get_enhancers_tpm(cell_lines = "A549")
+#'   get_fantom_enhancers_tpm(cell_lines = "A549")
 #'
 #'   # To get the TPM in A549 and in K562 cell lines
-#'   get_enhancers_tpm(cell_lines = c("A549", "K562"))
+#'   get_fantom_enhancers_tpm(cell_lines = c("A549", "K562"))
 #'
 #'   # To get the TPM K562 cell lines and merge metadata columns by returning
 #'   # their mean value
-#'   get_enhancers_tpm(cell_lines = "K562", merge.FUN = mean)
+#'   get_fantom_enhancers_tpm(cell_lines = "K562", merge.FUN = mean)
 #'
 #' @export
-get_enhancers_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
+get_fantom_enhancers_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
   if (is.null(cell_lines)) {
     enhancers
   } else {
     # Get libraries IDs
     cell_line <- unique(cell_lines)
-    ids <- lapply(cell_lines, get_fantom_library_name)
+    ids <- lapply(cell_lines, get_fantom_fantom_library_name)
     names(ids) <- cell_lines
 
     # Fetch columns
@@ -132,14 +132,14 @@ get_enhancers_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
 			 function(x) apply(as.data.frame(x), 1, merge.FUN))
       names
     } else {
-      get_names <- function(basename) {
+      get_fantom_names <- function(basename) {
         id <- ids[[basename]]
         names <- rep(basename, length(id))
         paste(names, 1:length(names), sep = "_")
       }
       metadata <- lapply(metadata, as.data.frame)
       metadata <- do.call("cbind", metadata)
-      colnames(metadata) <- unlist(lapply(cell_lines, get_names))
+      colnames(metadata) <- unlist(lapply(cell_lines, get_fantom_names))
     }
 
     # Add the metadata to the gr to return
@@ -154,16 +154,16 @@ get_enhancers_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
 #' This function returns the library names and the sample names for every
 #' experiment from Fantom.
 #'
-#' @seealso get_fantom_library_name
+#' @seealso get_fantom_fantom_library_name
 #'
 #' @return A \code{data.frame} with 2 columns: "library_name" and
 #' "sample_name". One row per Fantom experiment.
 #'
 #' @examples
-#'   head(get_experiment_infos())
+#'   head(get_fantom_experiment_infos())
 #'
 #' @export
-get_experiment_infos <- function() {
+get_fantom_experiment_infos <- function() {
   to_return <- exp_description[,c("Library.Name", "Comment..sample_name.")]
   colnames(to_return) <- c("library_name", "sample_name")
   to_return
