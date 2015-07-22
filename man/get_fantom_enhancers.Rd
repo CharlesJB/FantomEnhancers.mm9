@@ -8,7 +8,7 @@ get_fantom_enhancers()
 }
 \value{
 A \code{GRanges} object representing every enhancers from Fantom in
-  hg19.
+  mm9.
 }
 \description{
 Produce a GRanges object containing all the enhancers from Fantom but

@@ -11,10 +11,10 @@
 prepare_internal_datasets <- function(force = FALSE) {
   sysdata <- "R/sysdata.rda"
   exp_description <- data_fantom_exp_description(force = force)
-  enhancers <- data_fantom_enhancers(force = force)
-  tss <- data_fantom_tss(force = force)
-  devtools::use_data(exp_description, enhancers, internal = TRUE,
-    overwrite = TRUE)
+  enhancers_tpm <- data_fantom_enhancers("tpm", force = force)
+  enhancers_counts <- data_fantom_enhancers("counts", force = force)
+  devtools::use_data(exp_description, enhancers_tpm, enhancers_counts,
+    internal = TRUE, overwrite = TRUE)
 }
 
 # Prepare the enhancers dataset
@@ -26,7 +26,7 @@ prepare_internal_datasets <- function(force = FALSE) {
 # Download url:
 #  "http://fantom.gsc.riken.jp/5/datafiles/latest/extra/Enhancers/"
 # Filename:
-#  "human_permissive_enhancers_phase_1_and_2_expression_tpm_matrix.txt.gz"
+#  "mouse_permissive_enhancers_phase_1_and_2_expression_tpm_matrix.txt.gz"
 #
 # param force If TRUE, the inst/extdata file will be created, even if it
 #             exists. Default: \code{FALSE}.
@@ -34,18 +34,22 @@ prepare_internal_datasets <- function(force = FALSE) {
 # return The \code{GRanges} produced.
 #
 # examples
-# FantomEnhancers.hg19::data_fantom_enhancers()
-data_fantom_enhancers <- function(force = FALSE) {
-#  data_fantom_exp_description()
+# FantomEnhancers.mm9::data_fantom_enhancers()
+data_fantom_enhancers <- function(type = c("tpm", "counts"), force = FALSE) {
+  type = match.arg(type)
+  # Download enhancers tpm
+  if (type == "tpm") {
+    filename <-
+      "mouse_permissive_enhancers_phase_1_and_2_expression_tpm_matrix.txt.gz"
+  } else {
+    filename <-
+      "mouse_permissive_enhancers_phase_1_and_2_expression_count_matrix.txt.gz"
+  }
 
-  # Download enhancers
-  filename <-
-    "human_permissive_enhancers_phase_1_and_2_expression_tpm_matrix.txt.gz"
   url <- "http://fantom.gsc.riken.jp/5/datafiles/latest/extra/Enhancers/"
   url <- paste0(url, filename)
   filename <- paste0("inst/extdata/", filename)
   download_file(url, filename, force = force)
-
   # Import the enhancer file
   enhancers <- read.table(gzfile(filename), header = TRUE,
                           stringsAsFactors = FALSE)
@@ -58,7 +62,7 @@ data_fantom_enhancers <- function(force = FALSE) {
   df[["strand"]] <- "*"
   df <- cbind(df, enhancers[,-1])
   GenomicRanges::makeGRangesFromDataFrame(df, keep.extra.columns = TRUE,
-    seqinfo = GenomeInfoDb::Seqinfo(genome = "hg19"))
+    seqinfo = GenomeInfoDb::Seqinfo(genome = "mm9"))
 }
 
 # Prepare the exp_description dataset
@@ -68,9 +72,10 @@ data_fantom_enhancers <- function(force = FALSE) {
 # directory.
 #
 # Download url:
-#  "http://fantom.gsc.riken.jp/5/datafiles/latest/basic/human.cell_line.hCAGE/"
+#  "http://fantom.gsc.riken.jp/5/datafiles/latest/basic/mouse.tissue.hCAGE/"
 # Filename:
-#  "inst/extdata/00_human.cell_line.hCAGE.hg19.assay_sdrf.txt"
+#  "inst/extdata/00_mouse.cell_line.hCAGE.mm9.assay_sdrf.txt"
+#  "inst/extdata/00_mouse.tissue.hCAGE.mm9.assay_sdrf.txt"
 #
 # param force If TRUE, the inst/extdata file will be created, even if it
 #             exists. Default: \code{FALSE}.
@@ -81,9 +86,9 @@ data_fantom_enhancers <- function(force = FALSE) {
 # FantomEnhancers.hg19::data_fantom_enhancers()
 data_fantom_exp_description <- function(force = FALSE) {
   # Download TSS
-  filename <- "00_human.cell_line.hCAGE.hg19.assay_sdrf.txt"
+  filename <- "00_mouse.tissue.hCAGE.mm9.assay_sdrf.txt"
   url <-
-    "http://fantom.gsc.riken.jp/5/datafiles/latest/basic/human.cell_line.hCAGE/"
+    "http://fantom.gsc.riken.jp/5/datafiles/latest/basic/mouse.tissue.hCAGE/"
   url <- paste0(url, filename)
   filename <- paste0("inst/extdata/", filename)
   download_file(url, filename, force = force)

@@ -1,7 +1,7 @@
-Package: FantomEnhancers.hg19
+Package: FantomEnhancers.mm9
 Title: Position and normalized expression of Fantom's enhancers
-Version: 0.1.2
-Date: 2015-05-14
+Version: 0.1.1
+Date: 2015-07-22
 Author: Charles Joly Beauparlant <charles.joly-beauparlant@crchul.ulaval.ca>
 Author@R: c(person("Charles", "Joly Beauparlant",
     email="charles.joly-beauparlant@crchul.ulaval.ca")
@@ -9,7 +9,7 @@ Maintainer: Charles Joly Beauparlant <charles.joly-beauparlant@crchul.ulaval.ca>
 Description: This packages provided helper functions to extract the normalized
     expression of Fantom's enhancers (in TPM).
 Imports: GenomicRanges, S4Vectors
-biocViews: ExperimentData, OrganismData, Hoso_sapiens_data
+biocViews: ExperimentData, OrganismData, Mus_musculus_data
 License: Artistic-2.0
 VignetteBuilder: knitr
 Suggests: knitr

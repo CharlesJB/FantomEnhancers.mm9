@@ -9,7 +9,7 @@
 #
 # examples
 #  \dontrun{
-#    filename <- "00_human.cell_line.hCAGE.hg19.assay_sdrf.txt"
+#    filename <- "00_human.cell_line.hCAGE.mm9.assay_sdrf.txt"
 #    url <- "http://fantom.gsc.riken.jp/5/datafiles/latest/basic/human.cell_line.hCAGE/"
 #    url <- paste0(url, filename)
 #    filename <- paste0("inst/extdata/", filename)
@@ -50,7 +50,7 @@ get_fantom_fantom_library_name <- function(cell_line) {
 #' @seealso  \code{\link{get_fantom_enhancers_tpm}}
 #'
 #' @return A \code{GRanges} object representing every enhancers from Fantom in
-#'   hg19.
+#'   mm9.
 #'
 #' @examples
 #'   get_fantom_enhancers()
@@ -77,7 +77,7 @@ get_fantom_enhancers <- function() {
 #'                   Fantom's experiments sample names.
 #'
 #'                   If \code{NULL}, this will return a \code{GRanges} object
-#'                   with all the Fantom's experiments (1827 columns).
+#'                   with all the Fantom's experiments.
 #'
 #'                   The metadata columns will be named using the
 #'                   \code{cell_type} param. When \code{merge.FUN} is
@@ -114,8 +114,71 @@ get_fantom_enhancers <- function() {
 #' @export
 get_fantom_enhancers_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
   if (is.null(cell_lines)) {
-    enhancers
+    enhancers_tpm
   } else {
+    clean_and_subset_enhancers(enhancers_tpm, cell_lines, merge.FUN = merge.FUN)
+  }
+}
+
+#' Get a GRanges object with the counts values for specific cell types
+#'
+#' Returns a GRanges with metadata columns corresponding to the requested
+#' cell type enhancer expression (in counts).
+#'
+#' @seealso \code{\link{get_fantom_enhancers}}
+#' @seealso \code{\link{get_fantom_enhancers_tpm}}
+#' @seealso \code{\link{get_fantom_fantom_library_name}}
+#'
+#' @param cell_lines The cell line(s) to fetch. Must be a vector of character.
+#'                   The function will look for the pattern (with \code{grepl})
+#'                   to find case-insensitive match(es) with this param in the
+#'                   Fantom's experiments sample names.
+#'
+#'                   If \code{NULL}, this will return a \code{GRanges} object
+#'                   with all the Fantom's experiments.
+#'
+#'                   The metadata columns will be named using the
+#'                   \code{cell_type} param. When \code{merge.FUN} is
+#'                   \code{NULL} and there is multiple experiment for the same
+#'                   cell line, a counter will be added after each name to
+#'                   ensure all metadata colnames are unique (i.e.: A549_1,
+#'                   A549_2, A549_3). If \code{NULL}, the experiment names will
+#'                   be used for each metadata colnames.
+#'
+#'                   Default: \code{NULL}.
+#' @param merge.FUN  A function to merge the TPM when there is more than one
+#'                   column for the same cell type. Must take a vector of
+#'                   numeric as input and returns a single numeric value.
+#'
+#'                   Default: \code{NULL}
+#'
+#' @return A \code{GRanges} object with the metadata columns containing the
+#'   expression value in counts for the requested cell line(s), all
+#'   experiments expression values are returned if \code{cell_line} is
+#'   \code{NULL}. If the cell line(s) is not found, an empty \code{GRanges} is
+#'   returned.
+#'
+#' @examples
+#'   # To get the counts in lung
+#'   get_fantom_enhancers_counts(cell_lines = "lung")
+#'
+#'   # To get the counts in lung and heart
+#'   get_fantom_enhancers_counts(cell_lines = c("lung", "heart"))
+#'
+#'   # To get the counts lung and merge metadata columns by returning
+#'   # their mean value
+#'   get_fantom_enhancers_counts(cell_lines = "lung", merge.FUN = mean)
+#'
+#' @export
+get_fantom_enhancers_counts <- function(cell_lines = NULL, merge.FUN = NULL) {
+  if (is.null(cell_lines)) {
+    enhancers_counts
+  } else {
+    clean_and_subset_enhancers(enhancers_counts, cell_lines, merge.FUN = merge.FUN)
+  }
+}
+
+clean_and_subset_enhancers <- function(enhancers, cell_lines, merge.FUN) {
     # Get libraries IDs
     cell_line <- unique(cell_lines)
     ids <- lapply(cell_lines, get_fantom_fantom_library_name)
@@ -146,7 +209,6 @@ get_fantom_enhancers_tpm <- function(cell_lines = NULL, merge.FUN = NULL) {
     gr <- enhancers
     S4Vectors::mcols(gr) <- metadata
     gr
-  }
 }
 
 #' Get Fantom's experiment metadata

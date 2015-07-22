@@ -1,12 +1,12 @@
-# FantomEnhancers.hg19
+# FantomEnhancers.mm9
 
-The goal of this package is to easily extract the genomic positions and the normalized expression of Fantom's enhancers (in TPM) in hg19.
+The goal of this package is to easily extract the genomic positions and the normalized expression of Fantom's enhancers (in TPM) in mm9.
 
 ## Installation
 
 ```
 require(devtools)
-devtools::install_github("CharlesJB/FantomEnhancers.hg19")
+devtools::install_github("CharlesJB/FantomEnhancers.mm9")
 ```
 
 ## Main functions
@@ -18,6 +18,8 @@ get_fantom_enhancers()
 
 The `get_fantom_enhancers_tpm` returns a `GRanges` object with all the enhancers and selected metadata columns:
 ```
+
+# TODO: Change cell lines for murine cell lines
 # To get the expression of enhancers in A549
 get_fantom_enhancers_tpm(cell_lines = "A549")
 
