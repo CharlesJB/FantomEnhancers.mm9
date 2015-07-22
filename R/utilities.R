@@ -58,7 +58,7 @@ get_fantom_fantom_library_name <- function(cell_line) {
 #' @import GenomicRanges
 #' @export
 get_fantom_enhancers <- function() {
-  to_return <- enhancers
+  to_return <- enhancers_tpm
   S4Vectors::mcols(to_return) <- NULL
   to_return
 }
